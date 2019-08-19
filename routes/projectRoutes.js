@@ -113,4 +113,25 @@ router.get("/:id", (req, res) => {
     .catch(err => res.status(400).json('unable to get project data'))
 })
 
+// Return contributors for specific project
+
+router.get('/:id/contributors', (req, res) => {
+
+    try{
+        projects
+            .select('user_id')
+            .from('contribution')
+            .where({project_id: req.params.id})
+            .then( contributors => {
+
+                contributors.map(id => console.log(id))
+
+            })
+    } catch (e) {
+        res.status(500).send({message: 'Server error'})
+    }
+
+
+})
+
 module.exports = router
