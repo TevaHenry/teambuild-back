@@ -1,5 +1,6 @@
 const express = require("express")
 const projects = require("../database/db").contributions
+const users = require("../database/db").users
 
 const { checkToken } = require("../middleware/checkToken")
 
@@ -111,6 +112,37 @@ router.get("/:id", (req, res) => {
         res.json(project);
     })
     .catch(err => res.status(400).json('unable to get project data'))
+})
+
+// Return contributors ID, e-mail and name for specific project
+
+router.get('/:id/contributors', (req, res) => {
+
+    try{
+        projects
+            .select('user_id')
+            .from('contribution')
+            .where({project_id: req.params.id})
+            .then(contr => {
+
+                Promise.all(
+                    contr.map(id => {
+
+                        return users
+                            .select('user_id', 'email', 'first_name', 'last_name')
+                            .from('users')
+                            .where({ user_id: id.user_id })
+                    })
+                ).then(member => {
+                    res.json(member)
+                }).catch(e => 'Server error')
+
+            })
+
+    } catch (e) {
+        res.status(500).send({message: 'Server error'})
+    }
+
 })
 
 module.exports = router

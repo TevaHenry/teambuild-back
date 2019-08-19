@@ -33,8 +33,6 @@ router.get("/", checkToken, (req, res) => {
                         .from("picture")
                         .where({email: user[0].email})
                         .then(img => {
-                            //console.log('userData',userData)
-                            //console.log('img', img[0])
 
                             userData["image"] = img[0]
                             console.log('userData',userData)
