@@ -103,4 +103,14 @@ router.post("/update", checkToken, (req, res) => {
 
 })
 
+// Request specific project
+router.get("/:id", (req, res) => {
+    projects.select('*').from('project')
+    .where('project_id', '=', req.params.id)
+    .then(project => {
+        res.json(project);
+    })
+    .catch(err => res.status(400).json('unable to get project data'))
+})
+
 module.exports = router
