@@ -128,13 +128,6 @@ router.get('/:id/contributors', (req, res) => {
                 Promise.all(
                     contr.map(id => {
 
-<<<<<<< HEAD
-                        return users
-                            .select('users.user_id', 'users.email', 'users.first_name', 'users.last_name', 'user_picture.image')
-                            .from('users')
-                            .innerJoin('user_picture', 'user_picture.email', 'users.email')
-                            .where({ user_id: id.user_id })
-=======
                             return users
                                 .select('user_id', 'u.email', 'first_name', 'last_name', 'pic.image')
                                 .from('users AS u')
@@ -142,7 +135,6 @@ router.get('/:id/contributors', (req, res) => {
                                 .where({ user_id: id.user_id })
 
 
->>>>>>> f137794aead8fa9b750a0b1a5ccf3ff8e2efebe0
                     })
                 ).then(member => {
                     res.json(member)
