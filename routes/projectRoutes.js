@@ -128,13 +128,17 @@ router.get('/:id/contributors', (req, res) => {
                 Promise.all(
                     contr.map(id => {
 
-                        return users
-                            .select('user_id', 'email', 'first_name', 'last_name')
-                            .from('users')
-                            .where({ user_id: id.user_id })
+                            return users
+                                .select('user_id', 'u.email', 'first_name', 'last_name', 'pic.image')
+                                .from('users AS u')
+                                .innerJoin('user_picture AS pic', 'u.email', 'pic.email')
+                                .where({ user_id: id.user_id })
+
+
                     })
                 ).then(member => {
                     res.json(member)
+
                 }).catch(e => 'Server error')
 
             })
