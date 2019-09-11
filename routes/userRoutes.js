@@ -1,12 +1,13 @@
 const express = require("express")
 const users = require("../database/db").users
 const projects = require("../database/db").contributions
-const pictures = require("../database/db").pictures
 
 const { Helper } = require("../utils/index")
 const { checkToken } = require("../middleware/checkToken")
 
 const multer = require("multer")
+
+const profile_img = '../static/profile_pic.jpg'
 
 const router = new express.Router()
 
@@ -154,6 +155,7 @@ router.post("/register", (req, res) => {
         })
     }
 
+
     // Check if email input is valid
     if (!Helper.isValidEmail(email)) {
         return res
@@ -207,6 +209,12 @@ router.post("/register", (req, res) => {
                                             hashpass: hashedPassword,
                                         })
                                     )
+                                    // .then(() =>
+                                    //     trx("user_picture").insert({
+                                    //         email: email,
+                                    //         image: binary converted default image
+                                    //     })
+                                    // )
                             )
                         })
                         res.json({
