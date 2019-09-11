@@ -129,8 +129,9 @@ router.get('/:id/contributors', (req, res) => {
                     contr.map(id => {
 
                         return users
-                            .select('user_id', 'email', 'first_name', 'last_name')
+                            .select('users.user_id', 'users.email', 'users.first_name', 'users.last_name', 'user_picture.image')
                             .from('users')
+                            .innerJoin('user_picture', 'user_picture.email', 'users.email')
                             .where({ user_id: id.user_id })
                     })
                 ).then(member => {
