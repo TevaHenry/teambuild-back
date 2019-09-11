@@ -1,12 +1,13 @@
 const express = require("express")
 const users = require("../database/db").users
 const projects = require("../database/db").contributions
-const pictures = require("../database/db").pictures
 
 const { Helper } = require("../utils/index")
 const { checkToken } = require("../middleware/checkToken")
 
 const multer = require("multer")
+
+const profile_img = '../static/profile_pic.jpg'
 
 const router = new express.Router()
 
@@ -23,26 +24,10 @@ router.get("/", checkToken, (req, res) => {
             .select("*")
             .from("users AS u")
             .innerJoin("user_profile AS up", "u.email", "up.email")
+            .innerJoin("user_picture AS pic", "u.email", "pic.email")
             .where({ "u.user_id": id })
             .then(user => {
-                try{
-                    let userData = user[0]
-
-                    pictures
-                        .select("image")
-                        .from("picture")
-                        .where({email: user[0].email})
-                        .then(img => {
-
-                            userData["image"] = img[0]
-                            console.log('userData',userData)
-                            res.json(userData)
-                        })
-
-
-                } catch (err) {
-                    console.log(err)
-                }
+                res.json(user[0])
             })
 
     } catch (err) {
@@ -170,6 +155,7 @@ router.post("/register", (req, res) => {
         })
     }
 
+
     // Check if email input is valid
     if (!Helper.isValidEmail(email)) {
         return res
@@ -223,6 +209,12 @@ router.post("/register", (req, res) => {
                                             hashpass: hashedPassword,
                                         })
                                     )
+                                    // .then(() =>
+                                    //     trx("user_picture").insert({
+                                    //         email: email,
+                                    //         image: binary converted default image
+                                    //     })
+                                    // )
                             )
                         })
                         res.json({
@@ -305,17 +297,18 @@ router.post("/picture", checkToken, upload.single('file'), (req, res) => {
     } else {
         try{
 
-            pictures
+            users
                 .select("*")
-                .from("picture")
+                .from("user_picture")
                 .where({email: email})
                 .then(data => {
+                    console.log('data', data)
                     if(data.length !== 0) {
                         // Replace an existing picture
                         try{
 
-                            pictures.transaction(trx => {
-                                return trx("picture")
+                            users.transaction(trx => {
+                                return trx("user_picture")
                                     .where({email: email})
                                     .update({image: img})
                             })
@@ -330,11 +323,11 @@ router.post("/picture", checkToken, upload.single('file'), (req, res) => {
                         try{
 
                             // Adding picture to database if there is no record yet with the user email
-                            pictures.transaction(trx => {
+                            users.transaction(trx => {
                                 return trx.insert({
                                     email: email,
                                     image: img
-                                }).into("picture")
+                                }).into("user_picture")
                             })
                             res.json({message: "Image successfully uploaded"})
 
