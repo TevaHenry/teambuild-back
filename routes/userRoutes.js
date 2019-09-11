@@ -305,17 +305,17 @@ router.post("/picture", checkToken, upload.single('file'), (req, res) => {
     } else {
         try{
 
-            pictures
+            users
                 .select("*")
-                .from("picture")
+                .from("user_picture")
                 .where({email: email})
                 .then(data => {
                     if(data.length !== 0) {
                         // Replace an existing picture
                         try{
 
-                            pictures.transaction(trx => {
-                                return trx("picture")
+                            users.transaction(trx => {
+                                return trx("user_picture")
                                     .where({email: email})
                                     .update({image: img})
                             })
@@ -330,11 +330,11 @@ router.post("/picture", checkToken, upload.single('file'), (req, res) => {
                         try{
 
                             // Adding picture to database if there is no record yet with the user email
-                            pictures.transaction(trx => {
+                            users.transaction(trx => {
                                 return trx.insert({
                                     email: email,
                                     image: img
-                                }).into("picture")
+                                }).into("user_picture")
                             })
                             res.json({message: "Image successfully uploaded"})
 
