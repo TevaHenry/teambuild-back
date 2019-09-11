@@ -23,26 +23,10 @@ router.get("/", checkToken, (req, res) => {
             .select("*")
             .from("users AS u")
             .innerJoin("user_profile AS up", "u.email", "up.email")
+            .innerJoin("user_picture AS pic", "u.email", "pic.email")
             .where({ "u.user_id": id })
             .then(user => {
-                try{
-                    let userData = user[0]
-
-                    pictures
-                        .select("image")
-                        .from("picture")
-                        .where({email: user[0].email})
-                        .then(img => {
-
-                            userData["image"] = img[0]
-                            console.log('userData',userData)
-                            res.json(userData)
-                        })
-
-
-                } catch (err) {
-                    console.log(err)
-                }
+                res.json(user[0])
             })
 
     } catch (err) {
@@ -310,6 +294,7 @@ router.post("/picture", checkToken, upload.single('file'), (req, res) => {
                 .from("user_picture")
                 .where({email: email})
                 .then(data => {
+                    console.log('data', data)
                     if(data.length !== 0) {
                         // Replace an existing picture
                         try{
