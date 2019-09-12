@@ -7,8 +7,6 @@ const { checkToken } = require("../middleware/checkToken")
 
 const multer = require("multer")
 
-const profile_img = '../static/profile_pic.jpg'
-
 const router = new express.Router()
 
 // Handles binary files from front-end
@@ -148,6 +146,7 @@ router.post("/login", (req, res) => {
 router.post("/register", (req, res) => {
     const { email, password, first_name, last_name, github, role } = req.body
 
+
     // Check if email and password are present
     if (!email || !password || !first_name || !last_name || !github || !role) {
         return res.status(400).send({
@@ -209,12 +208,12 @@ router.post("/register", (req, res) => {
                                             hashpass: hashedPassword,
                                         })
                                     )
-                                    // .then(() =>
-                                    //     trx("user_picture").insert({
-                                    //         email: email,
-                                    //         image: binary converted default image
-                                    //     })
-                                    // )
+                                    .then(() =>
+                                        trx('user_picture').insert({
+                                            email: email,
+                                            image: null
+                                        })
+                                    )
                             )
                         })
                         res.json({
@@ -344,5 +343,6 @@ router.post("/picture", checkToken, upload.single('file'), (req, res) => {
     }
 
 })
+
 
 module.exports = router
