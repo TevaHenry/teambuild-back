@@ -114,6 +114,23 @@ router.get("/:id", (req, res) => {
     .catch(err => res.status(400).json('unable to get project data'))
 })
 
+// Get the project leader by ID
+
+router.get("/project-leader/:id", (req, res) => {
+    try{
+        users
+            .select('first_name', 'last_name', 'pic.image')
+            .from('users')
+            .innerJoin('user_picture as pic', 'users.email', 'pic.email')
+            .where({user_id: req.params.id})
+            .then(leader => {
+                res.json(leader)
+            })
+    } catch (err) {
+        res.status(500).send({message: 'Server error'})
+    }
+})
+
 // Return contributors ID, e-mail and name for specific project
 
 router.get('/:id/contributors', (req, res) => {
