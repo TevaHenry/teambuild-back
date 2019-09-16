@@ -166,4 +166,22 @@ router.get('/:id/contributors', (req, res) => {
 
 })
 
+// Return desired roles to fill (recruits) for specific project
+
+router.get('/:id/recruits', (req, res) => {
+
+    try{
+        projects
+            .select('developer', 'designer', 'operator')
+            .from('recruits')
+            .where({project_id: req.params.id})
+            .then(recruits => {
+                    res.json(recruits)
+            })
+    } catch (e) {
+        res.status(500).send({message: 'Server error'})
+    }
+
+})
+
 module.exports = router
